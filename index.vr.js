@@ -2,30 +2,37 @@ import React from 'react';
 import {
   AppRegistry,
   asset,
-  Box,
-  Cylinder,
   Pano,
-  Sphere,
-  Text,
   Animated,
   View,
+  Text,
+  VrButton
 } from 'react-vr';
 
 export default class WebVR extends React.Component {
   constructor(){
     super();
     this.state = {
-      animateValue: new Animated.Value(2.1)
+      animateValue: new Animated.Value(-1)
     }
   }
 
-  componentDidMount(){
+  handleStart(){
     Animated.timing(
       this.state.animateValue,
       {
-        toValue: -0.3,
+        toValue: 1,
         duration: 1000,
-        delay: 1000
+        delay: 0
+      }
+    ).start();
+  }
+
+  handleStop(){
+    Animated.decay(
+      this.state.animateValue, {
+        velocity: 0.01,
+        deceleration: 0.98
       }
     ).start();
   }
@@ -34,62 +41,56 @@ export default class WebVR extends React.Component {
     return (
       <View>
         <Pano source={asset('chess-world.jpg')}/>
-        
-        <Box
-          dimWidth = {0.35}
-          dimDepth = {0.35}
-          dimHeight = {0.40}
-            texture = {asset('env.jpg')}
-            style = { {color: 'white',
-                        transform: [{translate: [-2,0,0]},
-                                    {rotateX: 45},
-                                    {rotateY: 45},
-                                    {rotateZ: 45}],
-                        
-            }}
-        />
 
-        <Sphere 
-          radius = {0.1}
-          widthSegments = {100}
-          heightSegements = {100}
-            texture = {asset('chess-world.jpg')}
-            style = { {color: 'white',
-                      transform: [{translate: [0,0,2]},
-                                  {rotateX: 45},
-                                  {rotateY: 45},
-                                  {rotateZ: 45}],
-          }}
-                      
-        />
+        <VrButton billboarding = {'on'}
+            style = 
+            {
+              {
+                transform: [{translate: [-0.2, -0.5, -2]}],
+                backgroundColor: 'blue'
+              }
+            }
+            onClick = {
+              this.handleStart.bind(this)
+            }>
+            <Text>Start</Text>
+          </VrButton>
+          <VrButton billboarding = {'on'}
+            style = 
+            {
+              {
+                transform: [{translate: [-0.2, -0.6, -2]}],
+                backgroundColor: 'red'
+              }
+            }
+            onClick = {
+              this.handleStop.bind(this)
+            }>
+            <Text>Stop</Text>
+          </VrButton>
 
-        <Cylinder
-          radiusTop = {0.2}
-          radiusBottom = {0.2}
-          dimHeight = {0.3}
-            segments = {100}
-            texture = {asset('env.jpg')}
-            style = { {color: 'white',
-                      transform: [{translate: [2,0,0]},
-                                  {rotateX: 45},
-                                  {rotateY: 45},
-                                  {rotateZ: 45}],
-          }}
-        />
-
-        <Animated.Text
+        <Animated.Image
         style = {{
-          backgroundColor: '#00ff00',
-          fontsize: 0.8,
-          textAlignVertical: 'center',
-          layoutOrgin: [0.5,0.5],
-          transform:[{translateY: this.state.animateValue},
-                      {translateX: 0},
-                      {translateZ: -1}]
-        }}>
-        Timing Animation
-        </Animated.Text>
+          width: 0.5,
+          height: 0.5,
+          layoutOrigin: [0.5,0.5],
+          transform:[{translateY: 0},
+                      {translateX: this.state.animateValue},
+                      {translateZ: -2}]
+        }}source={asset('car.png')}>
+        </Animated.Image>
 
+        <Animated.Image
+          style = {{
+            width: 0.5,
+            height: 0.5,
+            layoutOrigin: [0.5,0.5],
+            transform:[{translateY: 0.6},
+                        {translateX: 1},
+                        {translateZ: -2}]
+          }}source={asset('finish.png')}>
+
+          </Animated.Image>
       </View>
     );
   }
