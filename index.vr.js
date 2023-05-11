@@ -1,58 +1,66 @@
 import React from 'react';
-import {  AppRegistry,  asset,  Pano,  Text,  View,  VrButton,} from 'react-vr';
+import {
+  AppRegistry,
+  asset,
+  Box,
+  Cylinder,
+  Pano,
+  Sphere,
+  Text,
+  View,
+} from 'react-vr';
 
-export default class Static_Demo extends React.Component 
-{
-	constructor(props)
-	{
-		super(props);
-		this.state =
-		{
-			value: "Hello",
-			imgSrc: "chess-world.jpg",
-		};
-		this.i=0;
-	}
-	start()
-	{
-		if(this.i%2==0)
-		{
-				this.setState({
-					value: "Welcome",
-					imgSrc: "env.jpg",
-				});
-			}
-		else{
-			this.setState({
-				value: "Hello",
-				imgSrc: "chess-world.jpg",
-			});
-		}
-    this.i++;
-	}
-	render() {
-		return (
-		  <View>
-			<Pano source={asset(this.state.imgSrc)}/>
-			<VrButton onClick={() => this.start()}>
-				<Text
-				  style={{
-					backgroundColor: '#777879',
-					fontSize: 0.8,
-					fontWeight: '400',
-					layoutOrigin: [0.5, 0.5],
-					paddingLeft: 0.2,
-					paddingRight: 0.2,
-					textAlign: 'center',
-					textAlignVertical: 'center',
-					transform: [{translate: [0, 0, -3]}],
-				  }}>
-				  {this.state.value}
-				</Text>
-			</VrButton>
-		  </View>
-		);
+export default class WebVR extends React.Component {
+  render() {
+    return (
+      <View>
+        <Pano source={asset('chess-world.jpg')}/>
+        
+        <Box
+          dimWidth = {0.35}
+          dimDepth = {0.35}
+          dimHeight = {0.40}
+            texture = {asset('env.jpg')}
+            style = { {color: 'white',
+                        transform: [{translate: [0,0,-2]},
+                                    {rotateX: 45},
+                                    {rotateY: 45},
+                                    {rotateZ: 45}],
+                        
+            }}
+        />
+
+        <Sphere 
+          radius = {0.1}
+          widthSegments = {100}
+          heightSegements = {100}
+            texture = {asset('chess-world.jpg')}
+            style = { {color: 'white',
+                      transform: [{translate: [0,0,2]},
+                                  {rotateX: 45},
+                                  {rotateY: 45},
+                                  {rotateZ: 45}],
+          }}
+                      
+        />
+
+        <Cylinder
+          radiusTop = {0.2}
+          radiusBottom = {0.2}
+          dimHeight = {0.3}
+            segments = {100}
+            texture = {asset('env.jpg')}
+            style = { {color: 'white',
+                      transform: [{translate: [2,0,0]},
+                                  {rotateX: 45},
+                                  {rotateY: 45},
+                                  {rotateZ: 45}],
+          }}
+        />
+
+      </View>
+    );
   }
 };
 
-AppRegistry.registerComponent('Static_Demo', () => Static_Demo);
+AppRegistry.registerComponent('WebVR', () => WebVR);
