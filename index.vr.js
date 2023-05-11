@@ -5,92 +5,92 @@ import {
   Pano,
   Animated,
   View,
-  Text,
-  VrButton
+  AmbientLight,
+  PointLight,
+  Model
 } from 'react-vr';
+import { Easing } from 'react-native';
 
 export default class WebVR extends React.Component {
   constructor(){
     super();
     this.state = {
-      animateValue: new Animated.Value(-1)
+      animateValue: new Animated.Value(0)
     }
   }
 
-  handleStart(){
+  componentDidMount(){
+    this.rotationclock();
+  }
+
+  rotationclock(){
+    this.changeColor()
+    this.state.animateValue.setValue(0);
     Animated.timing(
       this.state.animateValue,
       {
-        toValue: 1,
-        duration: 1000,
-        delay: 0
+        toValue: 360,
+        duration: 2500,
+        easing: Easing.linear,
       }
-    ).start();
+    ).start(()=> this.rotationanticlock());
   }
 
-  handleStop(){
-    Animated.decay(
-      this.state.animateValue, {
-        velocity: 0.01,
-        deceleration: 0.98
+  rotationanticlock(){
+    this.changeColor()
+    this.state.animateValue.setValue(360);
+    Animated.timing(
+      this.state.animateValue,
+      {
+        toValue: 0,
+        duration: 2500,
+        easing: Easing.linear,
       }
-    ).start();
+    ).start(()=> this.rotationclock());
+  }
+
+  changeColor(){
+    let randomNumber
+    randomNumber = Math.floor((Math.random() * 5) + 1)
+
+    if(randomNumber == 1){
+      this.setState({
+        output: 'green',
+      });
+    } else if(randomNumber == 2) {
+      this.setState({
+        output: 'red',
+      });
+    } else if(randomNumber == 3) {
+      this.setState({
+        output: 'yellow',
+      });
+    } else if(randomNumber == 4) {
+      this.setState({
+        output: 'blue',
+      });
+    } else {
+      this.setState({
+        output: 'violet',
+      });
+    }
   }
 
   render() {
+    const AnimateModel = Animated.createAnimatedComponent(Model);
     return (
       <View>
         <Pano source={asset('chess-world.jpg')}/>
-
-        <VrButton billboarding = {'on'}
-            style = 
-            {
-              {
-                transform: [{translate: [-0.2, -0.5, -2]}],
-                backgroundColor: 'blue'
-              }
-            }
-            onClick = {
-              this.handleStart.bind(this)
-            }>
-            <Text>Start</Text>
-          </VrButton>
-          <VrButton billboarding = {'on'}
-            style = 
-            {
-              {
-                transform: [{translate: [-0.2, -0.6, -2]}],
-                backgroundColor: 'red'
-              }
-            }
-            onClick = {
-              this.handleStop.bind(this)
-            }>
-            <Text>Stop</Text>
-          </VrButton>
-
-        <Animated.Image
+        <AmbientLight intensity={0.9} style={{color: this.state.output}}/>
+        <PointLight style = {{color: 'white', transform: [{translate: [0,0,0]}]}}/>
+        <AnimateModel
+        source = {{obj: asset('boy.obj'),mtl: asset('boy.mtl')}}
+        lit
         style = {{
-          width: 0.5,
-          height: 0.5,
           layoutOrigin: [0.5,0.5],
-          transform:[{translateY: 0},
-                      {translateX: this.state.animateValue},
-                      {translateZ: -2}]
-        }}source={asset('car.png')}>
-        </Animated.Image>
-
-        <Animated.Image
-          style = {{
-            width: 0.5,
-            height: 0.5,
-            layoutOrigin: [0.5,0.5],
-            transform:[{translateY: 0.6},
-                        {translateX: 1},
-                        {translateZ: -2}]
-          }}source={asset('finish.png')}>
-
-          </Animated.Image>
+          transform:[{translate: [0,-8,-25]},
+                     {rotateY: this.state.animateValue}]
+        }}/>
       </View>
     );
   }
